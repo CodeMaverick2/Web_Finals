@@ -1,81 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <title>Finals</title>
+// DOM elements
+const textarea = document.getElementById('post-textarea');
+const postButton = document.querySelector('.post-button');
+const charCount = document.getElementById('char-count');
+const feedContainer = document.querySelector('.ticket-containers');
 
-</head>
-<body>
-    <main>
-        <nav class="nav-bar">
-            <img class="scaler-logo" alt="scaler logo"  src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/033/original/SST_Logo.png?1706888781">
-            <img class="scaler-social" alt="scaler-social logo"  src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/032/original/scaler-social.png?1706888764">
-        </nav>
-        
-        <div class="posts-section">
-            <div class="write-post">
-                <div class="post-interface">
-                    <p>Post your thoughts here</p>
-                </div>
-                <div class="main-post">
-                    
-                    <div class="Box-post">
-                        <div class="input-box">
-                            <div class="logo">
-                                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739">
-                            </div>
-                            <div class="input-bar">
-                                <textarea class="textarea-cont" placeholder="Type your thoughts here....." rows="13" cols="44" required="true"></textarea>
-                            </div>
-                        </div>
-                            
-                        <div class="bottom-post">
-                            <div class="text-length">
-                                0/200
-                            </div>
-                            <div>
-                                <button class="post-button">Post</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
+// Event listeners
+textarea.addEventListener('input', updateCharCount);
+postButton.addEventListener('click', createPost);
+
+// Character count update
+function updateCharCount() {
+    const count = textarea.value.length;
+    charCount.textContent = count;
+    
+    // Disable post button if count > 200
+    postButton.disabled = count > 200;
+}
+
+// Create a new post
+function createPost() {
+    const content = textarea.value.trim();
+    if (content && content.length <= 200) {
+        const post = createPostElement(content);
+        feedContainer.prepend(post);
+        textarea.value = '';
+        updateCharCount();
+    }
+}
+
+// Create post HTML element
+function createPostElement(content) {
+    const post = document.createElement('div');
+    post.className = 'ticket';
+    post.innerHTML = `
+        <div class="profile">
+            <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739">
+        </div>
+        <div class="post-sec">
+            <div class="nav">
+                User Name <span class="grey-text">@username</span>
+                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/028/original/edit.png?1706888661" class="edit-btn">
+                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/027/original/delete.png?1706888643" class="delete-btn">
             </div>
-            <div class="post-comment">
-                <div class="text-feed">
-                    <p>Your feed</p>
-                </div>
-                <div class="ticket-containers">
-                    <div class="ticket">
-                        <div class="profile">
-                            <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739">
-                        </div>
-                        <div class="post-sec">
-                            <div class="nav">
-                                Joanne Graham <span class="grey-text">@joannegraham123</span>
-                                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/028/original/edit.png?1706888661">
-                                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/027/original/delete.png?1706888643">
-                            </div>
-                            <div class="text">
-                                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur quibusdam quisquam dolor unde ratione. 
-                                Eos dolorem alias voluptates deserunt asperiores in possimus neque eaque aliquid vero pro
-                                vident accusamus exercitationem placeat aperiam autem, natus perferendis rerum fugiat pariatur 
-                                nesciunt explicabo culpa tempora sint? Possimus corrupti debitis iste beatae, quae totam. Ratione?
-                            </div>
-                            <div class="like-comment">
-                                <img class="comment" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/026/original/comment.png?1706888619">
-                                <img class="like" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/029/original/heart.png?1706888679">
-                            </div>
-                        </div>
-                        
-                    </div>
-                </div>
+            <div class="text">${content}</div>
+            <div class="like-comment">
+                <img class="comment" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/026/original/comment.png?1706888619">
+                <img class="like" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/029/original/heart.png?1706888679">
             </div>
         </div>
-    </main>
-    <script src="script.js"></script>
-</body>
-</html>
+    `;
+
+    // Add event listeners for edit and delete
+    post.querySelector('.edit-btn').addEventListener('click', () => editPost(post));
+    post.querySelector('.delete-btn').addEventListener('click', () => deletePost(post));
+
+    return post;
+}
+
+// Edit post
+function editPost(post) {
+    const textElement = post.querySelector('.text');
+    const currentContent = textElement.textContent;
+    const input = document.createElement('textarea');
+    input.value = currentContent;
+    input.style.width = '100%';
+    input.style.height = 'auto';
+    input.style.minHeight = '100px';
+    textElement.replaceWith(input);
+
+    input.focus();
+
+    input.addEventListener('blur', () => {
+        const newContent = input.value.trim();
+        if (newContent && newContent !== currentContent) {
+            textElement.textContent = newContent;
+        }
+        input.replaceWith(textElement);
+    });
+}
+
+// Delete post
+function deletePost(post) {
+    if (confirm('Are you sure you want to delete this post?')) {
+        post.remove();
+    }
+}
