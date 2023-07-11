@@ -198,3 +198,40 @@ textarea {
     width: 20px;
     height: 20px;
 }
+.like-comment button {
+    background: none;
+    border: none;
+    color: #1DA1F2;
+    cursor: pointer;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.comments-section {
+    margin-top: 10px;
+}
+
+.comment-input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.submit-comment {
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.comments-list {
+    margin-top: 10px;
+}
+
+.comment {
+    background-color: #f0f0f0;
+    padding: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}

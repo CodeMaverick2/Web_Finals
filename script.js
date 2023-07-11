@@ -7,6 +7,12 @@ const feedContainer = document.querySelector('.ticket-containers');
 // Event listeners
 textarea.addEventListener('input', updateCharCount);
 postButton.addEventListener('click', createPost);
+textarea.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        createPost();
+    }
+});
 
 // Character count update
 function updateCharCount() {
@@ -14,7 +20,7 @@ function updateCharCount() {
     charCount.textContent = count;
     
     // Disable post button if count > 200
-    postButton.disabled = count > 200;
+    postButton.disabled = count > 200 || count === 0;
 }
 
 // Create a new post
@@ -44,15 +50,23 @@ function createPostElement(content) {
             </div>
             <div class="text">${content}</div>
             <div class="like-comment">
-                <img class="comment" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/026/original/comment.png?1706888619">
-                <img class="like" src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/029/original/heart.png?1706888679">
+                <button class="comment-btn">Comment</button>
+                <button class="like-btn">Like <span class="like-count">0</span></button>
+            </div>
+            <div class="comments-section" style="display: none;">
+                <textarea class="comment-input" placeholder="Write a comment..."></textarea>
+                <button class="submit-comment">Submit</button>
+                <div class="comments-list"></div>
             </div>
         </div>
     `;
 
-    // Add event listeners for edit and delete
+    // Add event listeners for edit, delete, like, and comment
     post.querySelector('.edit-btn').addEventListener('click', () => editPost(post));
     post.querySelector('.delete-btn').addEventListener('click', () => deletePost(post));
+    post.querySelector('.like-btn').addEventListener('click', () => likePost(post));
+    post.querySelector('.comment-btn').addEventListener('click', () => toggleCommentSection(post));
+    post.querySelector('.submit-comment').addEventListener('click', () => addComment(post));
 
     return post;
 }
@@ -83,5 +97,35 @@ function editPost(post) {
 function deletePost(post) {
     if (confirm('Are you sure you want to delete this post?')) {
         post.remove();
+    }
+}
+
+// Like post
+function likePost(post) {
+    const likeBtn = post.querySelector('.like-btn');
+    const likeCount = likeBtn.querySelector('.like-count');
+    let count = parseInt(likeCount.textContent);
+    count++;
+    likeCount.textContent = count;
+}
+
+// Toggle comment section
+function toggleCommentSection(post) {
+    const commentSection = post.querySelector('.comments-section');
+    commentSection.style.display = commentSection.style.display === 'none' ? 'block' : 'none';
+}
+
+// Add comment
+function addComment(post) {
+    const commentInput = post.querySelector('.comment-input');
+    const commentsList = post.querySelector('.comments-list');
+    const commentText = commentInput.value.trim();
+    
+    if (commentText) {
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment';
+        commentElement.textContent = commentText;
+        commentsList.appendChild(commentElement);
+        commentInput.value = '';
     }
 }
