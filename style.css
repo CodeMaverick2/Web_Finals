@@ -1,0 +1,148 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.nav-bar{
+    margin-top: 15px;
+    height: 6vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+.scaler-logo{
+    margin-left: 8vw;
+    height: 40px;
+    width: auto;
+}
+.scaler-social{
+    height: 40px;
+    width: auto;
+    margin-left: 55vw;
+}
+.posts-section{
+    height: 94vh;
+    width: 100vw;
+    display: flex;
+}
+.write-post{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 55%;
+    background-color: #ECF8FF;
+}
+.post-comment{
+    height: 100%;
+    width: 45%;
+    
+    /* height: 100vw;
+    width: 100vw; */
+}
+.text-feed{
+    height: 10%;
+    width: 100%;
+    padding: 35px;
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+.ticket-containers{
+    height: 100%;
+    width: 100%;
+    /* background-color: antiquewhite; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+}
+.main-post{
+    height: 300px;
+    width: 500px;
+    /* background-color: antiquewhite; */
+    background-color: white;
+    border-radius: 4px;
+
+}
+.post-interface{
+    font: italic;
+    font-size: 1.5rem;
+    padding-right: 250px;
+}
+.input-box{
+    display: flex;
+}
+.text-area-cont{
+    border: none;
+    font-size: larger;
+}
+textarea {
+    border: none;
+    outline: none;
+}
+
+.logo{
+    margin-right: 30px;
+    margin-left: 10px;
+    margin-top: 10px;
+    
+}
+.bottom-post{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+}
+.text-length{
+    margin-left: 20px;
+}
+.post-button{
+    height: 40px;
+    width: 100px;
+    background-color: blue;
+    border-radius: 20px;
+    margin-left: 300px;
+    margin-top: 5px;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    font-weight: 1000;
+    
+}
+.ticket{
+    height: 300px;
+    width: 500px;
+    background-color: whitesmoke;
+    border-radius: 4px;
+    display: flex;
+    border: 1px solid black;
+}
+
+.profile{
+    width: 20%;
+    height: 100%;
+    padding: 20px;
+}
+.text{
+    width: 100%;
+    height: 70%;
+}
+.grey-text{
+    color: grey;
+    margin-right: 25px;
+}
+.nav{
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+.like-comment{
+    height: 100%;
+    width: 100%;
+}
+.comment{
+    margin-right: 20px;
+}
+
