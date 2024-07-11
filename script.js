@@ -50,12 +50,15 @@ function createPostElement(content) {
             </div>
             <div class="text">${content}</div>
             <div class="like-comment">
-                <button class="comment-btn">Comment</button>
-                <button class="like-btn">Like <span class="like-count">0</span></button>
+                <button class="comment-btn">💬 Comment</button>
+                <button class="like-btn">🤍 <span class="like-count">0</span></button>
             </div>
             <div class="comments-section" style="display: none;">
-                <textarea class="comment-input" placeholder="Write a comment..."></textarea>
-                <button class="submit-comment">Submit</button>
+                <div class="comment-box">
+                    <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="comment-profile-img">
+                    <textarea class="comment-input" placeholder="Write a comment..."></textarea>
+                </div>
+                <button class="submit-comment">Comment</button>
                 <div class="comments-list"></div>
             </div>
         </div>
@@ -64,7 +67,7 @@ function createPostElement(content) {
     // Add event listeners for edit, delete, like, and comment
     post.querySelector('.edit-btn').addEventListener('click', () => editPost(post));
     post.querySelector('.delete-btn').addEventListener('click', () => deletePost(post));
-    post.querySelector('.like-btn').addEventListener('click', () => likePost(post));
+    post.querySelector('.like-btn').addEventListener('click', (e) => likePost(e.currentTarget));
     post.querySelector('.comment-btn').addEventListener('click', () => toggleCommentSection(post));
     post.querySelector('.submit-comment').addEventListener('click', () => addComment(post));
 
@@ -101,12 +104,18 @@ function deletePost(post) {
 }
 
 // Like post
-function likePost(post) {
-    const likeBtn = post.querySelector('.like-btn');
+function likePost(likeBtn) {
     const likeCount = likeBtn.querySelector('.like-count');
     let count = parseInt(likeCount.textContent);
-    count++;
-    likeCount.textContent = count;
+    if (likeBtn.classList.contains('liked')) {
+        count--;
+        likeBtn.innerHTML = `🤍 <span class="like-count">${count}</span>`;
+        likeBtn.classList.remove('liked');
+    } else {
+        count++;
+        likeBtn.innerHTML = `❤️ <span class="like-count">${count}</span>`;
+        likeBtn.classList.add('liked');
+    }
 }
 
 // Toggle comment section
@@ -124,7 +133,13 @@ function addComment(post) {
     if (commentText) {
         const commentElement = document.createElement('div');
         commentElement.className = 'comment';
-        commentElement.textContent = commentText;
+        commentElement.innerHTML = `
+            <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="comment-profile-img">
+            <div class="comment-content">
+                <span class="comment-username">User Name</span>
+                <p>${commentText}</p>
+            </div>
+        `;
         commentsList.appendChild(commentElement);
         commentInput.value = '';
     }
