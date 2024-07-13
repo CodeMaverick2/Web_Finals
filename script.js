@@ -39,19 +39,17 @@ function createPostElement(content) {
     const post = document.createElement('div');
     post.className = 'ticket';
     post.innerHTML = `
-        <div class="profile">
-            <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739">
-        </div>
         <div class="post-sec">
             <div class="nav">
-                User Name <span class="grey-text">@username</span>
+                <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="profile-img">
+                <span>Tejas <span class="grey-text">@tejas</span></span>
                 <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/028/original/edit.png?1706888661" class="edit-btn">
                 <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/027/original/delete.png?1706888643" class="delete-btn">
             </div>
             <div class="text">${content}</div>
             <div class="like-comment">
                 <button class="comment-btn">💬 Comment</button>
-                <button class="like-btn">🤍 <span class="like-count">0</span></button>
+                <button class="like-btn">🤍</button>
             </div>
             <div class="comments-section" style="display: none;">
                 <div class="comment-box">
@@ -63,7 +61,6 @@ function createPostElement(content) {
             </div>
         </div>
     `;
-
     // Add event listeners for edit, delete, like, and comment
     post.querySelector('.edit-btn').addEventListener('click', () => editPost(post));
     post.querySelector('.delete-btn').addEventListener('click', () => deletePost(post));
@@ -105,16 +102,10 @@ function deletePost(post) {
 
 // Like post
 function likePost(likeBtn) {
-    const likeCount = likeBtn.querySelector('.like-count');
-    let count = parseInt(likeCount.textContent);
-    if (likeBtn.classList.contains('liked')) {
-        count--;
-        likeBtn.innerHTML = `🤍 <span class="like-count">${count}</span>`;
-        likeBtn.classList.remove('liked');
+    if (likeBtn.textContent === '🤍') {
+        likeBtn.textContent = '❤️';
     } else {
-        count++;
-        likeBtn.innerHTML = `❤️ <span class="like-count">${count}</span>`;
-        likeBtn.classList.add('liked');
+        likeBtn.textContent = '🤍';
     }
 }
 
@@ -136,7 +127,7 @@ function addComment(post) {
         commentElement.innerHTML = `
             <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="comment-profile-img">
             <div class="comment-content">
-                <span class="comment-username">User Name</span>
+                <span class="comment-username">Tejas</span>
                 <p>${commentText}</p>
             </div>
         `;
