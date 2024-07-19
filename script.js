@@ -19,8 +19,17 @@ function updateCharCount() {
     const count = textarea.value.length;
     charCount.textContent = count;
     
-    // Disable post button if count > 200
+    // Disable post button if count > 200 or empty
     postButton.disabled = count > 200 || count === 0;
+    
+    // Change color based on character count
+    if (count > 180) {
+        charCount.style.color = 'red';
+    } else if (count > 160) {
+        charCount.style.color = 'orange';
+    } else {
+        charCount.style.color = 'inherit';
+    }
 }
 
 // Create a new post
@@ -31,6 +40,7 @@ function createPost() {
         feedContainer.prepend(post);
         textarea.value = '';
         updateCharCount();
+        savePosts(); // Save posts to local storage
     }
 }
 
@@ -38,18 +48,20 @@ function createPost() {
 function createPostElement(content) {
     const post = document.createElement('div');
     post.className = 'ticket';
+    const timestamp = new Date().toLocaleString();
     post.innerHTML = `
         <div class="post-sec">
             <div class="nav">
                 <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="profile-img">
                 <span>Tejas <span class="grey-text">@tejas</span></span>
+                <span class="grey-text timestamp">${timestamp}</span>
                 <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/028/original/edit.png?1706888661" class="edit-btn">
                 <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/027/original/delete.png?1706888643" class="delete-btn">
             </div>
-            <div class="text">${content}</div>
+            <div class="text">${formatContent(content)}</div>
             <div class="like-comment">
-                <button class="comment-btn">💬 Comment</button>
-                <button class="like-btn">🤍</button>
+                <button class="comment-btn">💬 <span class="comment-count">0</span></button>
+                <button class="like-btn">🤍 <span class="like-count">0</span></button>
             </div>
             <div class="comments-section" style="display: none;">
                 <div class="comment-box">
@@ -71,10 +83,17 @@ function createPostElement(content) {
     return post;
 }
 
+// Format content (add hashtag links and line breaks)
+function formatContent(content) {
+    return content
+        .replace(/(#\w+)/g, '<a href="#" class="hashtag">$1</a>')
+        .replace(/\n/g, '<br>');
+}
+
 // Edit post
 function editPost(post) {
     const textElement = post.querySelector('.text');
-    const currentContent = textElement.textContent;
+    const currentContent = textElement.innerHTML.replace(/<br>/g, '\n');
     const input = document.createElement('textarea');
     input.value = currentContent;
     input.style.width = '100%';
@@ -87,9 +106,10 @@ function editPost(post) {
     input.addEventListener('blur', () => {
         const newContent = input.value.trim();
         if (newContent && newContent !== currentContent) {
-            textElement.textContent = newContent;
+            textElement.innerHTML = formatContent(newContent);
         }
         input.replaceWith(textElement);
+        savePosts(); // Save posts after editing
     });
 }
 
@@ -97,16 +117,21 @@ function editPost(post) {
 function deletePost(post) {
     if (confirm('Are you sure you want to delete this post?')) {
         post.remove();
+        savePosts(); // Save posts after deletion
     }
 }
 
 // Like post
 function likePost(likeBtn) {
-    if (likeBtn.textContent === '🤍') {
-        likeBtn.textContent = '❤️';
+    const likeCount = likeBtn.querySelector('.like-count');
+    let count = parseInt(likeCount.textContent);
+    
+    if (likeBtn.textContent.includes('🤍')) {
+        likeBtn.innerHTML = `❤️ <span class="like-count">${count + 1}</span>`;
     } else {
-        likeBtn.textContent = '🤍';
+        likeBtn.innerHTML = `🤍 <span class="like-count">${count - 1}</span>`;
     }
+    savePosts(); // Save posts after liking
 }
 
 // Toggle comment section
@@ -128,10 +153,64 @@ function addComment(post) {
             <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="comment-profile-img">
             <div class="comment-content">
                 <span class="comment-username">Tejas</span>
-                <p>${commentText}</p>
+                <p>${formatContent(commentText)}</p>
             </div>
         `;
         commentsList.appendChild(commentElement);
         commentInput.value = '';
+        
+        // Update comment count
+        const commentBtn = post.querySelector('.comment-btn');
+        const commentCount = commentBtn.querySelector('.comment-count');
+        commentCount.textContent = parseInt(commentCount.textContent) + 1;
+        
+        savePosts(); // Save posts after adding comment
     }
 }
+
+// Save posts to local storage
+function savePosts() {
+    const posts = Array.from(feedContainer.children).map(post => ({
+        content: post.querySelector('.text').innerHTML,
+        likes: post.querySelector('.like-count').textContent,
+        comments: Array.from(post.querySelectorAll('.comment')).map(comment => ({
+            username: comment.querySelector('.comment-username').textContent,
+            content: comment.querySelector('p').innerHTML
+        })),
+        timestamp: post.querySelector('.timestamp').textContent
+    }));
+    localStorage.setItem('posts', JSON.stringify(posts));
+}
+
+// Load posts from local storage
+function loadPosts() {
+    const savedPosts = JSON.parse(localStorage.getItem('posts'));
+    if (savedPosts) {
+        savedPosts.forEach(postData => {
+            const post = createPostElement(postData.content);
+            post.querySelector('.text').innerHTML = postData.content;
+            post.querySelector('.like-count').textContent = postData.likes;
+            post.querySelector('.comment-count').textContent = postData.comments.length;
+            post.querySelector('.timestamp').textContent = postData.timestamp;
+            
+            const commentsList = post.querySelector('.comments-list');
+            postData.comments.forEach(commentData => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `
+                    <img src="https://d2beiqkhq929f0.cloudfront.net/public_assets/assets/000/064/031/original/profile_image.png?1706888739" class="comment-profile-img">
+                    <div class="comment-content">
+                        <span class="comment-username">${commentData.username}</span>
+                        <p>${commentData.content}</p>
+                    </div>
+                `;
+                commentsList.appendChild(commentElement);
+            });
+            
+            feedContainer.appendChild(post);
+        });
+    }
+}
+
+// Call loadPosts when the page loads
+window.addEventListener('load', loadPosts);
